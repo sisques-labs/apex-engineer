@@ -100,9 +100,13 @@ Configure ApexEngineer by editing the configuration file:
 ```yaml
 # config.yaml
 ai:
-  model: "ollama" # or "gpt4all", "llama"
-  model_name: "llama2"
-  endpoint: "http://localhost:11434"
+  model: "gpt4all" # or "ollama" (recommended: gpt4all - no server needed)
+  model_name: "ggml-gpt4all-j-v1.3-groovy.bin" # For GPT4All: model file name. For Ollama: model name
+  model_path: null # Optional: custom path for GPT4All models
+  endpoint: "http://localhost:11434" # Only used for Ollama
+  temperature: 0.7
+  max_tokens: 150
+  n_threads: 4 # Only used for GPT4All
 
 telemetry:
   game: "assetto_corsa"
@@ -116,11 +120,10 @@ voice:
 
 ## 🎮 Usage
 
-1. **Start your local AI model** (e.g., Ollama):
+1. **Choose your AI model**:
 
-   ```bash
-   ollama serve
-   ```
+   - **GPT4All** (recommended): No setup needed, works immediately. First run downloads model automatically.
+   - **Ollama**: Start the server first: `ollama serve`
 
 2. **Launch Assetto Corsa** and start a session
 
@@ -131,7 +134,7 @@ voice:
    ```
 
 4. **During gameplay**:
-   - Hold the push-to-talk button to ask questions
+   - Hold the push-to-talk button (SPACE by default) to ask questions
    - Release to receive AI feedback
    - Monitor telemetry analysis in real-time
 

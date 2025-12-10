@@ -1,0 +1,19 @@
+ai:
+  model: "gpt4all" # or "ollama"
+  model_name: "ggml-gpt4all-j-v1.3-groovy.bin" # For GPT4All: model file name. For Ollama: model name
+  model_path: null # Optional: custom path for GPT4All models (defaults to GPT4All directory)
+  endpoint: "http://localhost:11434" # Only used for Ollama
+  temperature: 0.7
+  max_tokens: 150
+  n_threads: 4 # Only used for GPT4All
+
+telemetry:
+  game: "assetto_corsa"
+  update_rate: 10 # Hz
+
+voice:
+  push_to_talk_key: "SPACE" # Keyboard key or wheel button
+  stt_enabled: true
+  tts_enabled: false # Set to true for voice responses
+  microphone_index: null # Optional: specify microphone device index
+

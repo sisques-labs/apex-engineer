@@ -92,10 +92,11 @@ class VoiceHandler:
             if self.audio_thread.is_alive():
                 logger.warning("Recording thread did not finish within timeout")
 
-        # Process recorded audio
+        # Process recorded audio in a separate thread to avoid blocking
         if self.stt_enabled:
-            logger.debug("Processing recorded audio...")
-            self._process_audio()
+            logger.debug("Starting audio processing in background thread...")
+            processing_thread = threading.Thread(target=self._process_audio, daemon=True)
+            processing_thread.start()
 
     def _record_audio(self) -> None:
         """Record audio in a separate thread"""
@@ -275,7 +276,7 @@ class VoiceHandler:
 
     def speak(self, text: str, language: str = "en") -> None:
         """
-        Convert text to speech using natural-sounding TTS
+        Convert text to speech using natural-sounding TTS (non-blocking)
 
         Args:
             text: Text to speak
@@ -286,13 +287,26 @@ class VoiceHandler:
 
         logger.info(f"Speaking text: {text[:50]}...")
         
-        # Try edge-tts first (more natural, local, free)
-        if self._speak_edge_tts(text, language):
-            return
-        
-        # Fallback to pyttsx3 if edge-tts fails
-        logger.debug("Falling back to pyttsx3")
-        self._speak_pyttsx3(text, language)
+        # Run TTS in a separate thread to avoid blocking
+        tts_thread = threading.Thread(
+            target=self._speak_in_thread,
+            args=(text, language),
+            daemon=True
+        )
+        tts_thread.start()
+    
+    def _speak_in_thread(self, text: str, language: str) -> None:
+        """Internal method to run TTS in a thread"""
+        try:
+            # Try edge-tts first (more natural, local, free)
+            if self._speak_edge_tts(text, language):
+                return
+            
+            # Fallback to pyttsx3 if edge-tts fails
+            logger.debug("Falling back to pyttsx3")
+            self._speak_pyttsx3(text, language)
+        except Exception as e:
+            logger.error(f"Error in TTS thread: {e}", exc_info=True)
 
     def _speak_edge_tts(self, text: str, language: str) -> bool:
         """Use Microsoft Edge TTS (natural, local, free)"""

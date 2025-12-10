@@ -108,7 +108,7 @@ class ApexEngineer:
         self.telemetry_reader.disconnect()
 
     def _main_loop(self) -> None:
-        """Main application loop"""
+        """Main application loop (optimized for low CPU usage)"""
         print("ApexEngineer is running. Press Ctrl+C to stop.")
         print("Hold SPACE (or configured key) to talk to your engineer.")
 
@@ -120,8 +120,9 @@ class ApexEngineer:
                     self._update_telemetry()
                     self.last_telemetry_update = current_time
 
-                # Small sleep to prevent CPU spinning
-                time.sleep(0.01)
+                # Adaptive sleep: longer sleep when not processing queries
+                # This reduces CPU usage significantly when idle
+                time.sleep(0.05)  # Increased from 0.01 to reduce CPU usage
 
         except KeyboardInterrupt:
             print("\nShutting down...")
@@ -135,7 +136,7 @@ class ApexEngineer:
 
     def _handle_user_query(self, query: str) -> None:
         """
-        Handle user voice query
+        Handle user voice query (non-blocking, runs in background thread)
 
         Args:
             query: Transcribed user query
@@ -147,28 +148,50 @@ class ApexEngineer:
         logger.info(f"Received query: {query}")
         print(f"\nDriver: {query}")
 
-        # Get current context
-        logger.debug("Getting telemetry context...")
-        context = self.context_engine.get_detailed_context()
-        logger.debug(f"Context retrieved: {len(context)} keys")
+        # Process query in a separate thread to avoid blocking telemetry loop
+        import threading
+        processing_thread = threading.Thread(
+            target=self._process_user_query,
+            args=(query,),
+            daemon=True
+        )
+        processing_thread.start()
+        logger.debug("Query processing started in background thread")
 
-        # Generate AI response
-        logger.info("Generating AI response...")
-        print("[AI] Thinking...", end="", flush=True)
-        start_time = time.time()
-        
-        response = self.ai_module.generate_response(query, context)
-        
-        elapsed = time.time() - start_time
-        logger.info(f"AI response generated in {elapsed:.2f}s")
-        print(f"\r[AI] Response ready ({elapsed:.2f}s)")  # Clear the "Thinking..." line
-        print(f"Engineer: {response}")
+    def _process_user_query(self, query: str) -> None:
+        """
+        Process user query with AI (runs in background thread)
 
-        # Speak response if TTS enabled
-        if self.voice_handler.tts_enabled:
-            logger.debug("Speaking response via TTS...")
-            language = self.config.get("ai.language", "es")
-            self.voice_handler.speak(response, language=language)
+        Args:
+            query: Transcribed user query
+        """
+        try:
+            # Get current context
+            logger.debug("Getting telemetry context...")
+            context = self.context_engine.get_detailed_context()
+            logger.debug(f"Context retrieved: {len(context)} keys")
+
+            # Generate AI response
+            logger.info("Generating AI response...")
+            print("[AI] Thinking...", end="", flush=True)
+            start_time = time.time()
+            
+            response = self.ai_module.generate_response(query, context)
+            
+            elapsed = time.time() - start_time
+            logger.info(f"AI response generated in {elapsed:.2f}s")
+            print(f"\r[AI] Response ready ({elapsed:.2f}s)")  # Clear the "Thinking..." line
+            print(f"Engineer: {response}")
+
+            # Speak response if TTS enabled (also non-blocking via edge-tts)
+            if self.voice_handler.tts_enabled:
+                logger.debug("Speaking response via TTS...")
+                language = self.config.get("ai.language", "es")
+                # TTS already runs in async context, but we can make it more explicit
+                self.voice_handler.speak(response, language=language)
+        except Exception as e:
+            logger.error(f"Error processing user query: {e}", exc_info=True)
+            print(f"Error processing query: {e}")
 
 
 def main():

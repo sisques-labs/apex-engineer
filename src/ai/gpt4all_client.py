@@ -124,8 +124,9 @@ class GPT4AllClient(AIModule):
             logger.info("Starting GPT4All inference...")
             logger.debug(f"Parameters: temp={self.temperature}, max_tokens={self.max_tokens}, threads={self.n_threads}")
             
-            # Generate response with optimized parameters for speed
+            # Generate response with optimized parameters for speed and CPU efficiency
             # Reduced top_k and top_p for faster generation
+            # Smaller n_batch to reduce memory and CPU spikes
             gen_start = time.time()
             response = self.model.generate(
                 prompt,
@@ -135,7 +136,7 @@ class GPT4AllClient(AIModule):
                 top_k=20,  # Reduced from 40 for faster generation
                 top_p=0.7,  # Reduced from 0.9 for faster generation
                 repeat_penalty=1.1,
-                n_batch=512,  # Batch size for faster processing
+                n_batch=256,  # Reduced from 512 to lower CPU/memory usage during gaming
             )
             gen_time = time.time() - gen_start
             

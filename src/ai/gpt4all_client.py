@@ -124,19 +124,20 @@ class GPT4AllClient(AIModule):
             logger.info("Starting GPT4All inference...")
             logger.debug(f"Parameters: temp={self.temperature}, max_tokens={self.max_tokens}, threads={self.n_threads}")
             
-            # Generate response with optimized parameters for speed and CPU efficiency
-            # Reduced top_k and top_p for faster generation
-            # Smaller n_batch to reduce memory and CPU spikes
+            # Generate response with maximum speed optimizations
+            # Aggressive parameters for fastest possible generation
             gen_start = time.time()
+            # Limit tokens aggressively for speed
+            max_tokens_limited = min(self.max_tokens, 50)
             response = self.model.generate(
                 prompt,
                 streaming=False,
                 temp=self.temperature,
-                max_tokens=self.max_tokens,
-                top_k=20,  # Reduced from 40 for faster generation
-                top_p=0.7,  # Reduced from 0.9 for faster generation
-                repeat_penalty=1.1,
-                n_batch=256,  # Reduced from 512 to lower CPU/memory usage during gaming
+                max_tokens=max_tokens_limited,
+                top_k=10,  # Very low for faster generation
+                top_p=0.5,  # Lower for faster, more deterministic
+                repeat_penalty=1.05,  # Lower penalty for speed
+                n_batch=512,  # Larger batch for better throughput
             )
             gen_time = time.time() - gen_start
             
@@ -181,51 +182,27 @@ class GPT4AllClient(AIModule):
 
         if context and "current" in context:
             context_summary = self._format_context(context)
+            # Ultra-compact prompt format for speed
             prompt = f"""{system_prompt}
-
-Telemetría: {context_summary}
-
-Piloto: {user_query}
-
-Ingeniero:"""
+Data: {context_summary}
+Q: {user_query}
+A:"""
         else:
             prompt = f"""{system_prompt}
 
-Piloto: {user_query}
-
-Ingeniero:"""
+Q: {user_query}
+A:"""
 
         return prompt
 
     def _get_system_prompt(self) -> str:
-        """Get system prompt based on configured language"""
+        """Get system prompt based on configured language (optimized for speed)"""
         prompts = {
-            "es": """Eres un ingeniero de Fórmula 1 hablando por radio con tu piloto durante una carrera.
-Responde SIEMPRE en español natural y directo, como lo haría un ingeniero real.
-Sé conciso (1-2 frases máximo), técnico pero claro, y da consejos accionables.
-Ejemplos de estilo:
-- "Los neumáticos están bien, mantén el ritmo"
-- "Ahorra combustible, reduce 200 rpm en rectas"
-- "Estás 0.3s más lento, empuja más en la curva 3"
-NO uses inglés mezclado. Habla como un ingeniero español profesional.""",
+            "es": """Eres ingeniero F1. Responde en español, 1-2 frases, directo y técnico.""",
             
-            "en": """You are a Formula 1 race engineer speaking over radio with your driver during a race.
-Always respond in natural, direct English, as a real engineer would.
-Be concise (1-2 sentences max), technical but clear, and give actionable advice.
-Style examples:
-- "Tyres are good, maintain pace"
-- "Save fuel, reduce 200 rpm on straights"
-- "You're 0.3s slower, push more in turn 3"
-Speak like a professional F1 engineer.""",
+            "en": """You are an F1 race engineer. Respond in English, 1-2 sentences, direct and technical.""",
             
-            "fr": """Tu es un ingénieur de Formule 1 parlant à la radio avec ton pilote pendant une course.
-Réponds TOUJOURS en français naturel et direct, comme le ferait un vrai ingénieur.
-Sois concis (1-2 phrases max), technique mais clair, et donne des conseils actionnables.
-Exemples de style:
-- "Les pneus sont bons, maintiens le rythme"
-- "Économise le carburant, réduis 200 tr/min en ligne droite"
-- "Tu es 0.3s plus lent, pousse plus dans le virage 3"
-Parle comme un ingénieur F1 professionnel.""",
+            "fr": """Tu es ingénieur F1. Réponds en français, 1-2 phrases, direct et technique.""",
         }
         
         # Default to English if language not found

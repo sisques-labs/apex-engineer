@@ -150,21 +150,28 @@ class ContextEngine:
         if len(self.telemetry_history) < 2:
             return analysis
 
+        # Convert deque to list for slicing (deque doesn't support slicing)
+        history_list = list(self.telemetry_history)
+
         # Check tire temperature trends
-        if all("tire_temperatures" in t for t in self.telemetry_history[-3:]):
-            recent_temps = [
-                sum(t["tire_temperatures"].values()) / len(t["tire_temperatures"])
-                for t in self.telemetry_history[-3:]
-            ]
-            if len(recent_temps) >= 2:
-                analysis["tire_temp_trend"] = "increasing" if recent_temps[-1] > recent_temps[0] else "decreasing"
+        if len(history_list) >= 3:
+            recent_history = history_list[-3:]
+            if all("tire_temperatures" in t for t in recent_history):
+                recent_temps = [
+                    sum(t["tire_temperatures"].values()) / len(t["tire_temperatures"])
+                    for t in recent_history
+                ]
+                if len(recent_temps) >= 2:
+                    analysis["tire_temp_trend"] = "increasing" if recent_temps[-1] > recent_temps[0] else "decreasing"
 
         # Check fuel consumption rate
-        if all("fuel" in t for t in self.telemetry_history[-5:]):
-            fuel_samples = [t["fuel"] for t in self.telemetry_history[-5:]]
-            if len(fuel_samples) >= 2:
-                fuel_consumption = fuel_samples[0] - fuel_samples[-1]
-                analysis["fuel_consumption_rate"] = fuel_consumption
+        if len(history_list) >= 5:
+            fuel_history = history_list[-5:]
+            if all("fuel" in t for t in fuel_history):
+                fuel_samples = [t["fuel"] for t in fuel_history]
+                if len(fuel_samples) >= 2:
+                    fuel_consumption = fuel_samples[0] - fuel_samples[-1]
+                    analysis["fuel_consumption_rate"] = fuel_consumption
 
         return analysis
 

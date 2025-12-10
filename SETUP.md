@@ -4,9 +4,7 @@
 
 1. **Python 3.8+** installed
 2. **Assetto Corsa** with shared memory enabled
-3. **AI Model**: Choose one:
-   - **GPT4All** (recommended - no server needed, works out of the box)
-   - **Ollama** (alternative - requires server running)
+3. **AI Model**: GPT4All (included - no server needed, works out of the box)
 4. **Microphone** (optional but recommended for voice input)
 
 ## Installation Steps
@@ -26,9 +24,7 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 2. Choose Your AI Model
-
-#### Option A: GPT4All (Recommended - No Server Needed)
+### 2. GPT4All Configuration
 
 GPT4All is included in the requirements and works immediately after installation. The first time you run the app, it will automatically download the model.
 
@@ -38,14 +34,14 @@ GPT4All is included in the requirements and works immediately after installation
 - Works out of the box
 - Lower latency (no network calls)
 - More privacy (fully local)
+- Completely autonomous - everything runs in your program
 
 **Configuration:**
 
 ```yaml
 ai:
-  model: "gpt4all"
-  model_name: "ggml-gpt4all-j-v1.3-groovy.bin" # Default model
-  # Available models: ggml-gpt4all-j-v1.3-groovy.bin, mistral-7b-instruct-v0.1.Q4_0.gguf, etc.
+  model_name: "mistral-7b-instruct-v0.1.Q4_0.gguf" # Recommended model
+  model_path: null # Optional: custom path for GPT4All models
   temperature: 0.7
   max_tokens: 150
   n_threads: 4 # Adjust based on your CPU cores
@@ -53,38 +49,11 @@ ai:
 
 **Available GPT4All Models:**
 
-- `ggml-gpt4all-j-v1.3-groovy.bin` (default, ~4GB, fast)
-- `mistral-7b-instruct-v0.1.Q4_0.gguf` (better quality, ~4GB)
+- `mistral-7b-instruct-v0.1.Q4_0.gguf` (recommended, ~4GB, best quality)
 - `orca-mini-3b-gguf2-q4_0.gguf` (smaller, faster, ~2GB)
+- `llama-2-7b-chat.Q4_0.gguf` (~4GB)
 
-#### Option B: Ollama (Alternative)
-
-Download and install Ollama from [https://ollama.ai](https://ollama.ai)
-
-After installation, pull a model:
-
-```bash
-ollama pull llama2
-# or
-ollama pull mistral
-```
-
-Start Ollama server:
-
-```bash
-ollama serve
-```
-
-**Configuration:**
-
-```yaml
-ai:
-  model: "ollama"
-  model_name: "llama2" # Change to your preferred model
-  endpoint: "http://localhost:11434"
-  temperature: 0.7
-  max_tokens: 150
-```
+Check all available models at: [GPT4All Models](https://gpt4all.io/index.html)
 
 ### 3. Configure ApexEngineer
 
@@ -92,9 +61,11 @@ Edit `config.yaml` to match your setup:
 
 ```yaml
 ai:
-  model: "gpt4all" # or "ollama"
-  model_name: "ggml-gpt4all-j-v1.3-groovy.bin" # For GPT4All: model file name
-  # For Ollama: model name like "llama2", "mistral"
+  model_name: "mistral-7b-instruct-v0.1.Q4_0.gguf" # GPT4All model file name
+  model_path: null # Optional: custom path for GPT4All models
+  temperature: 0.7
+  max_tokens: 150
+  n_threads: 4
 
 voice:
   push_to_talk_key: "SPACE" # Change if needed
@@ -112,21 +83,10 @@ In Assetto Corsa:
 
 ### 5. Run ApexEngineer
 
-**If using GPT4All:**
-
 ```bash
 python main.py
 # First run will download the model automatically (~4GB)
-```
-
-**If using Ollama:**
-
-```bash
-# Make sure Ollama is running first
-ollama serve
-
-# Then run ApexEngineer
-python main.py
+# This may take a few minutes depending on your internet connection
 ```
 
 ## Troubleshooting
@@ -140,18 +100,11 @@ python main.py
 
 ### "AI module is not available"
 
-**For GPT4All:**
-
 - Check that GPT4All is installed: `pip install gpt4all`
 - First run will download the model automatically (check internet connection)
 - Verify the model name in config.yaml matches an available model
 - Check available models: Visit [GPT4All Models](https://gpt4all.io/index.html)
-
-**For Ollama:**
-
-- Make sure Ollama is running: `ollama serve`
-- Check that the endpoint in config.yaml matches your Ollama setup
-- Verify the model name exists: `ollama list`
+- If a model fails to download (404 error), try a different model name from the list above
 
 ### Audio/STT Issues
 
@@ -178,7 +131,7 @@ The application includes mock telemetry data for development. You can test the A
 
 ## Next Steps
 
-- Customize the AI prompt in `src/ai/ollama_client.py` or `src/ai/gpt4all_client.py`
+- Customize the AI prompt in `src/ai/gpt4all_client.py`
 - Add support for additional racing simulators
 - Integrate with steering wheel buttons for push-to-talk
 - Enhance telemetry analysis and recommendations

@@ -1,11 +1,13 @@
+logging:
+  level: "DEBUG" # DEBUG, INFO, WARNING, ERROR (DEBUG shows all details including "thinking" status)
+
 ai:
-  model: "gpt4all" # or "ollama"
-  model_name: "ggml-gpt4all-j-v1.3-groovy.bin" # For GPT4All: model file name. For Ollama: model name
+  language: "en" # Language for responses: "es" (Spanish), "en" (English), "fr" (French), etc.
+  model_name: "orca-mini-3b-gguf2-q4_0.gguf" # GPT4All model file name (smaller = faster)
   model_path: null # Optional: custom path for GPT4All models (defaults to GPT4All directory)
-  endpoint: "http://localhost:11434" # Only used for Ollama
-  temperature: 0.7
-  max_tokens: 150
-  n_threads: 4 # Only used for GPT4All
+  temperature: 0.3 # Lower = faster, more deterministic
+  max_tokens: 80 # Concise but natural responses
+  n_threads: 8 # More threads = faster (adjust based on your CPU cores)
 
 telemetry:
   game: "assetto_corsa"
@@ -14,6 +16,6 @@ telemetry:
 voice:
   push_to_talk_key: "SPACE" # Keyboard key or wheel button
   stt_enabled: true
-  tts_enabled: false # Set to true for voice responses
+  tts_enabled: true # Set to true for voice responses
   microphone_index: null # Optional: specify microphone device index
 

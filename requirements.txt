@@ -3,8 +3,7 @@ pyyaml>=6.0
 requests>=2.31.0
 
 # AI Models
-gpt4all>=2.5.0  # For GPT4All local LLM (no server needed)
-# ollama  # Install separately: https://ollama.ai (if using Ollama)
+gpt4all>=2.5.0  # Local LLM (no server needed, fully autonomous)
 
 # Telemetry (Windows shared memory)
 pywin32>=306; sys_platform == "win32"

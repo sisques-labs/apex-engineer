@@ -31,7 +31,7 @@ Players can interact with the AI engineer by holding a button (keyboard or wheel
 
 ### Local AI Model Support
 
-To minimize latency and maximize privacy, ApexEngineer uses lightweight local AI models such as Ollama, GPT4All, or LLaMA variants. Responses can be generated in under 200 milliseconds, ensuring instant feedback during high-speed gameplay without relying on cloud services.
+To minimize latency and maximize privacy, ApexEngineer uses GPT4All, a lightweight local AI model that runs entirely within the application. Responses can be generated in under 200 milliseconds, ensuring instant feedback during high-speed gameplay without relying on cloud services or external servers.
 
 ### Dynamic Race Advice
 
@@ -58,7 +58,7 @@ Telemetry Reader (Python)
         ↓
 Context Engine
         ↓
-Local LLM (Ollama / GPT4All / LLaMA)
+Local LLM (GPT4All)
         ↓
 Optional TTS Engine
         ↓
@@ -76,7 +76,7 @@ Audio feedback to driver
 
 - Python 3.8 or higher
 - Assetto Corsa (with shared memory enabled)
-- Local AI model (Ollama, GPT4All, or compatible LLaMA variant)
+- GPT4All (automatically installed and configured)
 - Microphone for voice input (optional but recommended)
 
 ## 🔧 Installation
@@ -100,13 +100,11 @@ Configure ApexEngineer by editing the configuration file:
 ```yaml
 # config.yaml
 ai:
-  model: "gpt4all" # or "ollama" (recommended: gpt4all - no server needed)
-  model_name: "ggml-gpt4all-j-v1.3-groovy.bin" # For GPT4All: model file name. For Ollama: model name
+  model_name: "mistral-7b-instruct-v0.1.Q4_0.gguf" # GPT4All model file name
   model_path: null # Optional: custom path for GPT4All models
-  endpoint: "http://localhost:11434" # Only used for Ollama
   temperature: 0.7
   max_tokens: 150
-  n_threads: 4 # Only used for GPT4All
+  n_threads: 4 # Number of CPU threads for inference
 
 telemetry:
   game: "assetto_corsa"
@@ -120,10 +118,7 @@ voice:
 
 ## 🎮 Usage
 
-1. **Choose your AI model**:
-
-   - **GPT4All** (recommended): No setup needed, works immediately. First run downloads model automatically.
-   - **Ollama**: Start the server first: `ollama serve`
+1. **First run**: GPT4All will automatically download the model (~4GB) on first launch. This may take a few minutes.
 
 2. **Launch Assetto Corsa** and start a session
 
@@ -165,7 +160,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🙏 Acknowledgments
 
 - Assetto Corsa community for shared memory documentation
-- Ollama, GPT4All, and LLaMA teams for local AI model support
+- GPT4All team for local AI model support
 - The sim racing community for inspiration and feedback
 
 ## 💬 Why ApexEngineer?

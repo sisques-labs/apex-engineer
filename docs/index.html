@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ApexEngineer - Real-time AI race engineer for sim racing enthusiasts">
+    <title>ApexEngineer - AI Race Engineer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #e10600;
+            --secondary-color: #1e1e1e;
+            --accent-color: #ffffff;
+            --text-color: #f5f5f5;
+            --bg-dark: #0a0a0a;
+            --bg-card: #1a1a1a;
+            --border-color: #333;
+            --gradient: linear-gradient(135deg, #e10600 0%, #8b0000 100%);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background: var(--gradient);
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(225, 6, 0, 0.3);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .tagline {
+            font-size: 1.3rem;
+            opacity: 0.95;
+            font-weight: 300;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--bg-card);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        nav a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+        }
+
+        nav a:hover {
+            color: var(--primary-color);
+            background: rgba(225, 6, 0, 0.1);
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        section {
+            margin-bottom: 4rem;
+            animation: fadeIn 1s ease;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            font-size: 1.8rem;
+            margin: 2rem 0 1rem;
+            color: var(--accent-color);
+        }
+
+        /* Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(225, 6, 0, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+
+        /* Code blocks */
+        pre {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        code {
+            font-family: 'Courier New', monospace;
+            color: #4ec9b0;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background: var(--gradient);
+            color: var(--accent-color);
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(225, 6, 0, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-card);
+            border: 2px solid var(--primary-color);
+        }
+
+        /* Badges */
+        .badges {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        /* Architecture Diagram */
+        .architecture {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .flow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .flow-item {
+            background: var(--bg-dark);
+            padding: 1rem 2rem;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .flow-arrow {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        footer p {
+            margin: 0.5rem 0;
+            opacity: 0.8;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .tagline {
+                font-size: 1.1rem;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            main {
+                padding: 2rem 1rem;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #b80500;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>🏎️ ApexEngineer</h1>
+            <p class="tagline">Real-time AI race engineer for sim racing enthusiasts</p>
+        </div>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#architecture">Architecture</a></li>
+            <li><a href="#installation">Installation</a></li>
+            <li><a href="#usage">Usage</a></li>
+            <li><a href="#github">GitHub</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <section id="overview">
+            <h2>🎯 Overview</h2>
+            <p>
+                ApexEngineer is an innovative real-time AI race engineer designed for sim racing enthusiasts and professional drivers who want an immersive, data-driven racing experience. The core idea is to create a virtual engineer that communicates directly with the player, providing actionable insights about car performance, strategy, and telemetry during gameplay—just like a real Formula 1 engineer would in a race.
+            </p>
+            <p>
+                In modern motorsport, engineers monitor vast amounts of telemetry data in real time: lap times, tire temperature, fuel levels, gear selection, speed, and sector performance. ApexEngineer brings this same capability into sim racing by reading telemetry directly from games like Assetto Corsa, processing it through an AI model, and communicating with the driver via push-to-talk voice commands.
+            </p>
+            
+            <div class="badges">
+                <span class="badge">📦 MIT License</span>
+                <span class="badge">🐍 Python 3.8+</span>
+                <span class="badge">🤖 Local AI</span>
+                <span class="badge">🎮 Assetto Corsa</span>
+                <span class="badge">🎤 Voice Interface</span>
+            </div>
+        </section>
+
+        <section id="features">
+            <h2>✨ Key Features</h2>
+            <div class="feature-grid">
+                <div class="card">
+                    <div class="card-icon">📊</div>
+                    <h3>Real-Time Telemetry Analysis</h3>
+                    <p>
+                        Connects to Assetto Corsa's shared memory to retrieve live telemetry. Captures essential metrics such as speed, RPM, gear, tire temperatures, lap times, deltas, and fuel, processing them instantly to provide meaningful feedback.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">🎤</div>
+                    <h3>Push-to-Talk Voice Interface</h3>
+                    <p>
+                        Players can interact with the AI engineer by holding a button (keyboard or wheel). While the button is pressed, the system records audio, converts it to text (STT), and sends it to the AI model. Upon release, the AI generates a response.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">🤖</div>
+                    <h3>Local AI Model Support</h3>
+                    <p>
+                        Uses GPT4All, a lightweight local AI model that runs entirely within the application. Responses can be generated in under 200 milliseconds, ensuring instant feedback during high-speed gameplay without relying on cloud services.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">💡</div>
+                    <h3>Dynamic Race Advice</h3>
+                    <p>
+                        The AI can interpret telemetry contextually and provide strategic recommendations, such as when to push, conserve fuel, pit strategies, and ideal lap targets. It tracks performance over time, comparing the current lap to the best lap.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">🔧</div>
+                    <h3>Modular and Extensible Design</h3>
+                    <p>
+                        Designed with modularity in mind. New telemetry sources, games, AI models, or TTS engines can be integrated easily, allowing the system to evolve and adapt to new technologies and racing simulations.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <div class="card-icon">⚡</div>
+                    <h3>Low Latency Performance</h3>
+                    <p>
+                        Optimized for minimal CPU usage and fast response times. The system runs efficiently in the background, providing real-time feedback without impacting game performance.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="architecture">
+            <h2>🏗️ Architecture</h2>
+            <p>
+                The system is divided into clear, modular components that work together to provide a seamless racing experience:
+            </p>
+
+            <div class="architecture">
+                <div class="flow">
+                    <div class="flow-item">
+                        <strong>Assetto Corsa</strong><br>
+                        Shared Memory
+                    </div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-item">
+                        <strong>Telemetry Reader</strong><br>
+                        Python Module
+                    </div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-item">
+                        <strong>Context Engine</strong><br>
+                        Data Processing
+                    </div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-item">
+                        <strong>Local LLM</strong><br>
+                        GPT4All
+                    </div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-item">
+                        <strong>Optional TTS Engine</strong><br>
+                        Voice Output
+                    </div>
+                    <div class="flow-arrow">↓</div>
+                    <div class="flow-item">
+                        <strong>Audio Feedback</strong><br>
+                        To Driver
+                    </div>
+                </div>
+            </div>
+
+            <h3>Components</h3>
+            <ul style="list-style-position: inside; line-height: 2;">
+                <li><strong>Telemetry Reader</strong>: Connects to Assetto Corsa shared memory to read live car data</li>
+                <li><strong>Context Engine</strong>: Processes telemetry, computes deltas, summaries, and prepares context for the AI model</li>
+                <li><strong>AI Module</strong>: A local LLM processes driver queries in real time, using telemetry context to generate precise, actionable advice</li>
+                <li><strong>TTS Engine</strong> (optional): Converts AI responses into spoken audio, enhancing immersion</li>
+                <li><strong>Push-to-Talk Interface</strong>: Captures driver input via keyboard or wheel buttons and triggers the AI communication cycle</li>
+            </ul>
+        </section>
+
+        <section id="installation">
+            <h2>🚀 Installation</h2>
+            
+            <h3>Requirements</h3>
+            <ul style="list-style-position: inside; line-height: 2; margin-bottom: 2rem;">
+                <li>Python 3.8 or higher</li>
+                <li>Assetto Corsa (with shared memory enabled)</li>
+                <li>GPT4All (automatically installed and configured)</li>
+                <li>Microphone for voice input (optional but recommended)</li>
+            </ul>
+
+            <h3>Quick Start</h3>
+            <pre><code># Clone the repository
+git clone https://github.com/sisques-labs/apex-engineer.git
+cd apex-engineer
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Configure your local AI model
+# Edit config.yaml to customize settings</code></pre>
+
+            <h3>Configuration</h3>
+            <p>Configure ApexEngineer by editing the <code>config.yaml</code> file:</p>
+            <pre><code># config.yaml
+ai:
+  model_name: "mistral-7b-instruct-v0.1.Q4_0.gguf"
+  model_path: null
+  temperature: 0.7
+  max_tokens: 150
+  n_threads: 4
+
+telemetry:
+  game: "assetto_corsa"
+  update_rate: 10 # Hz
+
+voice:
+  push_to_talk_key: "SPACE"
+  stt_enabled: true
+  tts_enabled: false</code></pre>
+        </section>
+
+        <section id="usage">
+            <h2>🎮 Usage</h2>
+            <ol style="line-height: 2; padding-left: 2rem;">
+                <li><strong>First run</strong>: GPT4All will automatically download the model (~4GB) on first launch. This may take a few minutes.</li>
+                <li><strong>Launch Assetto Corsa</strong> and start a session</li>
+                <li><strong>Run ApexEngineer</strong>:
+                    <pre><code>python main.py</code></pre>
+                </li>
+                <li><strong>During gameplay</strong>:
+                    <ul style="margin-top: 0.5rem; padding-left: 2rem;">
+                        <li>Hold the push-to-talk button (SPACE by default) to ask questions</li>
+                        <li>Release to receive AI feedback</li>
+                        <li>Monitor telemetry analysis in real-time</li>
+                    </ul>
+                </li>
+            </ol>
+        </section>
+
+        <section id="github">
+            <h2>🔗 GitHub Repository</h2>
+            <p>
+                ApexEngineer is an open-source project. Visit the repository to contribute, report issues, or learn more about the project.
+            </p>
+            <div style="text-align: center; margin: 2rem 0;">
+                <a href="https://github.com/sisques-labs/apex-engineer" class="btn" target="_blank" rel="noopener noreferrer">
+                    📦 View on GitHub
+                </a>
+                <a href="https://github.com/sisques-labs/apex-engineer/issues" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
+                    🐛 Report Issue
+                </a>
+            </div>
+        </section>
+
+        <section>
+            <h2>🔮 Future Plans</h2>
+            <p>ApexEngineer is a living project with ambitious growth potential:</p>
+            <ul style="line-height: 2; padding-left: 2rem;">
+                <li>✅ Support for additional racing simulators like Assetto Corsa Competizione, F1 2025, and iRacing</li>
+                <li>✅ Fully integrated TTS with realistic F1 radio effects</li>
+                <li>✅ Advanced strategy recommendations based on tire degradation, fuel stints, and race dynamics</li>
+                <li>✅ Integration with real steering wheels and controllers for authentic push-to-talk interaction</li>
+                <li>✅ Optional cloud AI for deep reasoning, while maintaining a local fallback for minimal latency</li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p><strong>ApexEngineer</strong> - Real-time AI race engineer for sim racing enthusiasts</p>
+        <p>Made with ❤️ for the sim racing community</p>
+        <p style="margin-top: 1rem; opacity: 0.6;">
+            <a href="https://github.com/sisques-labs/apex-engineer/blob/main/LICENSE" style="color: var(--primary-color);">MIT License</a>
+        </p>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Highlight active section in navigation
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('nav a[href^="#"]');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.style.color = '';
+                link.style.background = '';
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.style.color = 'var(--primary-color)';
+                    link.style.background = 'rgba(225, 6, 0, 0.1)';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

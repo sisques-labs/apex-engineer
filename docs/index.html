@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="ApexEngineer - Real-time AI race engineer for sim racing enthusiasts">
-    <title>ApexEngineer - AI Race Engineer</title>
+    <meta name="description" content="Apex Engineer - Real-time AI race engineer for sim racing enthusiasts">
+    <title>Apex Engineer - AI Race Engineer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,60 +16,151 @@
         }
 
         :root {
-            --primary-color: #e10600;
-            --secondary-color: #1e1e1e;
+            --primary-color: #ff1a1a;
+            --primary-dark: #cc0000;
+            --primary-light: #ff4d4d;
+            --secondary-color: #1a1a1a;
             --accent-color: #ffffff;
-            --text-color: #f5f5f5;
+            --text-color: #e0e0e0;
+            --text-muted: #a0a0a0;
             --bg-dark: #0a0a0a;
-            --bg-card: #1a1a1a;
-            --border-color: #333;
-            --gradient: linear-gradient(135deg, #e10600 0%, #8b0000 100%);
+            --bg-darker: #050505;
+            --bg-card: rgba(26, 26, 26, 0.8);
+            --bg-card-hover: rgba(30, 30, 30, 0.95);
+            --border-color: rgba(255, 26, 26, 0.2);
+            --border-color-hover: rgba(255, 26, 26, 0.5);
+            --gradient-primary: linear-gradient(135deg, #ff1a1a 0%, #cc0000 50%, #990000 100%);
+            --gradient-hero: linear-gradient(135deg, #ff1a1a 0%, #cc0000 30%, #1a1a1a 100%);
+            --gradient-card: linear-gradient(135deg, rgba(255, 26, 26, 0.1) 0%, rgba(204, 0, 0, 0.05) 100%);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 8px 32px rgba(255, 26, 26, 0.3);
+            --shadow-glow: 0 0 30px rgba(255, 26, 26, 0.5);
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: var(--bg-dark);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-darker);
             color: var(--text-color);
-            line-height: 1.6;
+            line-height: 1.7;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 26, 26, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 26, 26, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(255, 26, 26, 0.05) 0%, transparent 50%);
+            animation: backgroundMove 20s ease-in-out infinite;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @keyframes backgroundMove {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-20px, -20px) scale(1.1); }
         }
 
         /* Header */
         header {
-            background: var(--gradient);
-            padding: 2rem 0;
+            position: relative;
+            background: var(--gradient-hero);
+            padding: 6rem 0 4rem;
             text-align: center;
-            box-shadow: 0 4px 20px rgba(225, 6, 0, 0.3);
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.05) 50%, transparent 70%),
+                radial-gradient(circle at 50% 50%, rgba(255, 26, 26, 0.2) 0%, transparent 70%);
+            animation: shimmer 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
         }
 
         .header-content {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 2rem;
+            position: relative;
+            z-index: 2;
         }
 
         h1 {
-            font-size: 3.5rem;
-            margin-bottom: 0.5rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            animation: fadeInDown 0.8s ease;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 900;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            animation: fadeInDown 1s ease, pulse 3s ease-in-out infinite;
+            letter-spacing: -0.02em;
+        }
+
+        h1 .emoji {
+            font-size: 1.2em;
+            filter: drop-shadow(0 0 20px rgba(255, 26, 26, 0.6));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        h1 .text {
+            background: linear-gradient(135deg, #ffffff 0%, #ffcccc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px rgba(255, 26, 26, 0.5);
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
         }
 
         .tagline {
-            font-size: 1.3rem;
+            font-size: clamp(1.1rem, 3vw, 1.5rem);
             opacity: 0.95;
             font-weight: 300;
-            animation: fadeInUp 0.8s ease 0.2s both;
+            animation: fadeInUp 1s ease 0.3s both;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
         }
 
         /* Navigation */
         nav {
-            background: var(--bg-card);
-            padding: 1rem 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 1.2rem 0;
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
             border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
         }
 
         nav ul {
@@ -74,7 +168,7 @@
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 2rem;
+            gap: 0.5rem;
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 2rem;
@@ -84,38 +178,89 @@
             color: var(--text-color);
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.3s;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            position: relative;
+            display: inline-block;
+        }
+
+        nav a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+            border-radius: 8px;
+        }
+
+        nav a:hover::before {
+            opacity: 1;
         }
 
         nav a:hover {
-            color: var(--primary-color);
-            background: rgba(225, 6, 0, 0.1);
+            color: var(--accent-color);
+            transform: translateY(-2px);
         }
 
         /* Main Content */
         main {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 3rem 2rem;
+            padding: 4rem 2rem;
+            position: relative;
+            z-index: 1;
         }
 
         section {
-            margin-bottom: 4rem;
-            animation: fadeIn 1s ease;
+            margin-bottom: 6rem;
+            animation: fadeInUp 0.8s ease both;
         }
 
+        section:nth-child(1) { animation-delay: 0.1s; }
+        section:nth-child(2) { animation-delay: 0.2s; }
+        section:nth-child(3) { animation-delay: 0.3s; }
+
         h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 0.5rem;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 1rem;
+        }
+
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+            box-shadow: var(--shadow-glow);
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--border-color);
         }
 
         h3 {
-            font-size: 1.8rem;
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            font-weight: 700;
             margin: 2rem 0 1rem;
             color: var(--accent-color);
         }
@@ -123,71 +268,151 @@
         /* Cards */
         .feature-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 2rem;
-            margin-top: 2rem;
+            margin-top: 3rem;
         }
 
         .card {
             background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 2rem;
-            transition: transform 0.3s, box-shadow 0.3s;
+            border-radius: 16px;
+            padding: 2.5rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .card:hover::before {
+            transform: scaleX(1);
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(225, 6, 0, 0.2);
-            border-color: var(--primary-color);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--border-color-hover);
+            background: var(--bg-card-hover);
         }
 
         .card-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 4px 8px rgba(255, 26, 26, 0.3));
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
         }
 
         .card h3 {
             margin-top: 0;
             font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            line-height: 1.8;
         }
 
         /* Code blocks */
         pre {
-            background: var(--bg-card);
+            background: rgba(10, 10, 10, 0.8);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 12px;
             padding: 1.5rem;
             overflow-x: auto;
-            margin: 1rem 0;
+            margin: 1.5rem 0;
+            position: relative;
+            box-shadow: var(--shadow-md);
+        }
+
+        pre::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 12px 0 0 12px;
         }
 
         code {
-            font-family: 'Courier New', monospace;
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
             color: #4ec9b0;
+            font-size: 0.9rem;
+            line-height: 1.6;
         }
 
         /* Buttons */
         .btn {
-            display: inline-block;
-            padding: 0.8rem 2rem;
-            background: var(--gradient);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2.5rem;
+            background: var(--gradient-primary);
             color: var(--accent-color);
             text-decoration: none;
-            border-radius: 6px;
+            border-radius: 12px;
             font-weight: 600;
-            transition: transform 0.3s, box-shadow 0.3s;
+            font-size: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             margin: 0.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(225, 6, 0, 0.4);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: var(--shadow-glow);
         }
 
         .btn-secondary {
-            background: var(--bg-card);
+            background: transparent;
             border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gradient-primary);
+            color: var(--accent-color);
         }
 
         /* Badges */
@@ -195,60 +420,130 @@
             display: flex;
             gap: 1rem;
             flex-wrap: wrap;
-            margin: 1rem 0;
+            margin: 2rem 0;
         }
 
         .badge {
-            display: inline-block;
-            padding: 0.5rem 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.7rem 1.3rem;
             background: var(--bg-card);
             border: 1px solid var(--border-color);
-            border-radius: 20px;
+            border-radius: 50px;
             font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .badge:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(255, 26, 26, 0.3);
         }
 
         /* Architecture Diagram */
         .architecture {
             background: var(--bg-card);
+            backdrop-filter: blur(10px);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 2rem;
+            border-radius: 20px;
+            padding: 3rem;
             margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .architecture::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 26, 26, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
 
         .flow {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1rem;
+            gap: 1.5rem;
+            position: relative;
+            z-index: 1;
         }
 
         .flow-item {
-            background: var(--bg-dark);
-            padding: 1rem 2rem;
-            border-radius: 6px;
+            background: rgba(10, 10, 10, 0.8);
+            padding: 1.5rem 2.5rem;
+            border-radius: 12px;
             border: 1px solid var(--border-color);
-            min-width: 200px;
+            min-width: 250px;
             text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .flow-item:hover {
+            transform: scale(1.05);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-md);
         }
 
         .flow-arrow {
-            font-size: 2rem;
+            font-size: 2.5rem;
             color: var(--primary-color);
+            animation: bounce 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px rgba(255, 26, 26, 0.5));
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
 
         /* Footer */
         footer {
-            background: var(--bg-card);
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
             border-top: 1px solid var(--border-color);
-            padding: 2rem;
+            padding: 3rem 2rem;
             text-align: center;
-            margin-top: 4rem;
+            margin-top: 6rem;
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--gradient-primary);
         }
 
         footer p {
             margin: 0.5rem 0;
             opacity: 0.8;
+        }
+
+        footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        footer a:hover {
+            color: var(--primary-light);
+            text-shadow: 0 0 10px rgba(255, 26, 26, 0.5);
         }
 
         /* Animations */
@@ -264,7 +559,7 @@
         @keyframes fadeInDown {
             from {
                 opacity: 0;
-                transform: translateY(-20px);
+                transform: translateY(-30px);
             }
             to {
                 opacity: 1;
@@ -275,7 +570,7 @@
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(30px);
             }
             to {
                 opacity: 1;
@@ -285,31 +580,37 @@
 
         /* Responsive */
         @media (max-width: 768px) {
-            h1 {
-                font-size: 2.5rem;
-            }
-
-            .tagline {
-                font-size: 1.1rem;
+            header {
+                padding: 4rem 0 3rem;
             }
 
             nav ul {
                 flex-direction: column;
-                gap: 0.5rem;
+                gap: 0.3rem;
             }
 
             .feature-grid {
                 grid-template-columns: 1fr;
+                gap: 1.5rem;
             }
 
             main {
                 padding: 2rem 1rem;
             }
+
+            .architecture {
+                padding: 2rem 1.5rem;
+            }
+
+            .flow-item {
+                min-width: 200px;
+                padding: 1.2rem 2rem;
+            }
         }
 
         /* Scrollbar */
         ::-webkit-scrollbar {
-            width: 10px;
+            width: 12px;
         }
 
         ::-webkit-scrollbar-track {
@@ -317,19 +618,48 @@
         }
 
         ::-webkit-scrollbar-thumb {
-            background: var(--primary-color);
-            border-radius: 5px;
+            background: var(--gradient-primary);
+            border-radius: 6px;
+            border: 2px solid var(--bg-dark);
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: #b80500;
+            background: var(--primary-light);
+        }
+
+        /* Selection */
+        ::selection {
+            background: var(--primary-color);
+            color: var(--accent-color);
+        }
+
+        /* Lists */
+        ul, ol {
+            padding-left: 2rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+            line-height: 1.8;
+        }
+
+        /* Paragraph spacing */
+        p {
+            margin-bottom: 1.5rem;
+        }
+
+        /* Section spacing */
+        section > p:first-of-type {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            line-height: 1.9;
         }
     </style>
 </head>
 <body>
     <header>
         <div class="header-content">
-            <h1>🏎️ ApexEngineer</h1>
+            <h1><span class="emoji">🏎️</span><span class="text">Apex Engineer</span></h1>
             <p class="tagline">Real-time AI race engineer for sim racing enthusiasts</p>
         </div>
     </header>
@@ -349,10 +679,10 @@
         <section id="overview">
             <h2>🎯 Overview</h2>
             <p>
-                ApexEngineer is an innovative real-time AI race engineer designed for sim racing enthusiasts and professional drivers who want an immersive, data-driven racing experience. The core idea is to create a virtual engineer that communicates directly with the player, providing actionable insights about car performance, strategy, and telemetry during gameplay—just like a real Formula 1 engineer would in a race.
+                Apex Engineer is an innovative real-time AI race engineer designed for sim racing enthusiasts and professional drivers who want an immersive, data-driven racing experience. The core idea is to create a virtual engineer that communicates directly with the player, providing actionable insights about car performance, strategy, and telemetry during gameplay—just like a real Formula 1 engineer would in a race.
             </p>
             <p>
-                In modern motorsport, engineers monitor vast amounts of telemetry data in real time: lap times, tire temperature, fuel levels, gear selection, speed, and sector performance. ApexEngineer brings this same capability into sim racing by reading telemetry directly from games like Assetto Corsa, processing it through an AI model, and communicating with the driver via push-to-talk voice commands.
+                In modern motorsport, engineers monitor vast amounts of telemetry data in real time: lap times, tire temperature, fuel levels, gear selection, speed, and sector performance. Apex Engineer brings this same capability into sim racing by reading telemetry directly from games like Assetto Corsa, processing it through an AI model, and communicating with the driver via push-to-talk voice commands.
             </p>
             
             <div class="badges">
@@ -458,7 +788,7 @@
             </div>
 
             <h3>Components</h3>
-            <ul style="list-style-position: inside; line-height: 2;">
+            <ul>
                 <li><strong>Telemetry Reader</strong>: Connects to Assetto Corsa shared memory to read live car data</li>
                 <li><strong>Context Engine</strong>: Processes telemetry, computes deltas, summaries, and prepares context for the AI model</li>
                 <li><strong>AI Module</strong>: A local LLM processes driver queries in real time, using telemetry context to generate precise, actionable advice</li>
@@ -471,7 +801,7 @@
             <h2>🚀 Installation</h2>
             
             <h3>Requirements</h3>
-            <ul style="list-style-position: inside; line-height: 2; margin-bottom: 2rem;">
+            <ul style="margin-bottom: 2rem;">
                 <li>Python 3.8 or higher</li>
                 <li>Assetto Corsa (with shared memory enabled)</li>
                 <li>GPT4All (automatically installed and configured)</li>
@@ -490,7 +820,7 @@ pip install -r requirements.txt
 # Edit config.yaml to customize settings</code></pre>
 
             <h3>Configuration</h3>
-            <p>Configure ApexEngineer by editing the <code>config.yaml</code> file:</p>
+            <p>Configure Apex Engineer by editing the <code>config.yaml</code> file:</p>
             <pre><code># config.yaml
 ai:
   model_name: "mistral-7b-instruct-v0.1.Q4_0.gguf"
@@ -511,14 +841,14 @@ voice:
 
         <section id="usage">
             <h2>🎮 Usage</h2>
-            <ol style="line-height: 2; padding-left: 2rem;">
+            <ol>
                 <li><strong>First run</strong>: GPT4All will automatically download the model (~4GB) on first launch. This may take a few minutes.</li>
                 <li><strong>Launch Assetto Corsa</strong> and start a session</li>
-                <li><strong>Run ApexEngineer</strong>:
+                <li><strong>Run Apex Engineer</strong>:
                     <pre><code>python main.py</code></pre>
                 </li>
                 <li><strong>During gameplay</strong>:
-                    <ul style="margin-top: 0.5rem; padding-left: 2rem;">
+                    <ul style="margin-top: 0.5rem;">
                         <li>Hold the push-to-talk button (SPACE by default) to ask questions</li>
                         <li>Release to receive AI feedback</li>
                         <li>Monitor telemetry analysis in real-time</li>
@@ -530,7 +860,7 @@ voice:
         <section id="github">
             <h2>🔗 GitHub Repository</h2>
             <p>
-                ApexEngineer is an open-source project. Visit the repository to contribute, report issues, or learn more about the project.
+                Apex Engineer is an open-source project. Visit the repository to contribute, report issues, or learn more about the project.
             </p>
             <div style="text-align: center; margin: 2rem 0;">
                 <a href="https://github.com/sisques-labs/apex-engineer" class="btn" target="_blank" rel="noopener noreferrer">
@@ -544,8 +874,8 @@ voice:
 
         <section>
             <h2>🔮 Future Plans</h2>
-            <p>ApexEngineer is a living project with ambitious growth potential:</p>
-            <ul style="line-height: 2; padding-left: 2rem;">
+            <p>Apex Engineer is a living project with ambitious growth potential:</p>
+            <ul>
                 <li>✅ Support for additional racing simulators like Assetto Corsa Competizione, F1 2025, and iRacing</li>
                 <li>✅ Fully integrated TTS with realistic F1 radio effects</li>
                 <li>✅ Advanced strategy recommendations based on tire degradation, fuel stints, and race dynamics</li>
@@ -556,10 +886,10 @@ voice:
     </main>
 
     <footer>
-        <p><strong>ApexEngineer</strong> - Real-time AI race engineer for sim racing enthusiasts</p>
+        <p><strong>Apex Engineer</strong> - Real-time AI race engineer for sim racing enthusiasts</p>
         <p>Made with ❤️ for the sim racing community</p>
         <p style="margin-top: 1rem; opacity: 0.6;">
-            <a href="https://github.com/sisques-labs/apex-engineer/blob/main/LICENSE" style="color: var(--primary-color);">MIT License</a>
+            <a href="https://github.com/sisques-labs/apex-engineer/blob/main/LICENSE">MIT License</a>
         </p>
     </footer>
 
@@ -582,12 +912,12 @@ voice:
         const sections = document.querySelectorAll('section[id]');
         const navLinks = document.querySelectorAll('nav a[href^="#"]');
 
-        window.addEventListener('scroll', () => {
+        function updateActiveNav() {
             let current = '';
             sections.forEach(section => {
                 const sectionTop = section.offsetTop;
                 const sectionHeight = section.clientHeight;
-                if (pageYOffset >= sectionTop - 200) {
+                if (window.pageYOffset >= sectionTop - 250) {
                     current = section.getAttribute('id');
                 }
             });
@@ -596,12 +926,36 @@ voice:
                 link.style.color = '';
                 link.style.background = '';
                 if (link.getAttribute('href') === `#${current}`) {
-                    link.style.color = 'var(--primary-color)';
-                    link.style.background = 'rgba(225, 6, 0, 0.1)';
+                    link.style.color = 'var(--accent-color)';
                 }
             });
+        }
+
+        window.addEventListener('scroll', updateActiveNav);
+        updateActiveNav();
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all cards
+        document.querySelectorAll('.card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
         });
     </script>
 </body>
 </html>
-

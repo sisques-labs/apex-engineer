@@ -167,7 +167,8 @@ class ApexEngineer:
         # Speak response if TTS enabled
         if self.voice_handler.tts_enabled:
             logger.debug("Speaking response via TTS...")
-            self.voice_handler.speak(response)
+            language = self.config.get("ai.language", "es")
+            self.voice_handler.speak(response, language=language)
 
 
 def main():

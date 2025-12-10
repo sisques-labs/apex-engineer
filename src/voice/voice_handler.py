@@ -273,24 +273,129 @@ class VoiceHandler:
             traceback.print_exc()
             return None
 
-    def speak(self, text: str) -> None:
+    def speak(self, text: str, language: str = "en") -> None:
         """
-        Convert text to speech
+        Convert text to speech using natural-sounding TTS
 
         Args:
             text: Text to speak
+            language: Language code (es, en, fr, etc.)
         """
         if not self.tts_enabled:
             return
 
+        logger.info(f"Speaking text: {text[:50]}...")
+        
+        # Try edge-tts first (more natural, local, free)
+        if self._speak_edge_tts(text, language):
+            return
+        
+        # Fallback to pyttsx3 if edge-tts fails
+        logger.debug("Falling back to pyttsx3")
+        self._speak_pyttsx3(text, language)
+
+    def _speak_edge_tts(self, text: str, language: str) -> bool:
+        """Use Microsoft Edge TTS (natural, local, free)"""
+        try:
+            import edge_tts
+            import asyncio
+            import tempfile
+            import os
+            import subprocess
+            import platform
+            
+            # Map language codes to edge-tts voices (neural voices sound natural)
+            voice_map = {
+                "es": "es-ES-ElviraNeural",      # Natural Spanish female voice
+                "en": "en-US-AriaNeural",         # Natural English female voice
+                "fr": "fr-FR-DeniseNeural",       # Natural French female voice
+            }
+            
+            voice = voice_map.get(language, voice_map["en"])
+            logger.debug(f"Using Edge TTS voice: {voice}")
+            
+            async def generate_speech():
+                communicate = edge_tts.Communicate(text, voice)
+                temp_file = os.path.join(tempfile.gettempdir(), f"apex_engineer_tts_{os.getpid()}.mp3")
+                await communicate.save(temp_file)
+                return temp_file
+            
+            # Run async function
+            temp_file = asyncio.run(generate_speech())
+            
+            # Play audio file - use playsound for cross-platform playback
+            try:
+                from playsound import playsound
+                playsound(temp_file, block=True)
+            except ImportError:
+                # Fallback to system commands
+                system = platform.system()
+                if system == "Windows":
+                    # Use PowerShell to play and wait
+                    subprocess.run(
+                        ["powershell", "-Command", f"(New-Object Media.SoundPlayer '{temp_file}').PlaySync()"],
+                        check=False,
+                        capture_output=True
+                    )
+                elif system == "Darwin":  # macOS
+                    subprocess.run(["afplay", temp_file], check=True, capture_output=True)
+                else:  # Linux
+                    subprocess.run(["mpg123", "-q", temp_file], check=True, capture_output=True)
+            
+            # Clean up
+            try:
+                os.remove(temp_file)
+            except:
+                pass
+            
+            logger.debug("Edge TTS playback completed")
+            return True
+            
+        except ImportError:
+            logger.debug("edge-tts not installed, install with: pip install edge-tts")
+            return False
+        except Exception as e:
+            logger.warning(f"Edge TTS failed: {e}")
+            return False
+
+    def _speak_pyttsx3(self, text: str, language: str) -> None:
+        """Fallback to pyttsx3 with improved settings"""
         try:
             import pyttsx3
 
             engine = pyttsx3.init()
+            
+            # Configure for more natural sound
+            # Set speech rate (words per minute) - slower is more natural
+            rate = engine.getProperty('rate')
+            engine.setProperty('rate', rate - 30)  # Slightly slower
+            
+            # Try to set a better voice based on language
+            voices = engine.getProperty('voices')
+            if voices:
+                # Prefer female voices (usually sound more natural)
+                for voice in voices:
+                    if language == "es" and "spanish" in voice.name.lower():
+                        engine.setProperty('voice', voice.id)
+                        break
+                    elif language == "en" and "english" in voice.name.lower():
+                        engine.setProperty('voice', voice.id)
+                        break
+                    elif language == "fr" and "french" in voice.name.lower():
+                        engine.setProperty('voice', voice.id)
+                        break
+            
+            # Set volume (0.0 to 1.0)
+            engine.setProperty('volume', 0.9)
+            
+            logger.debug("Using pyttsx3 for TTS")
             engine.say(text)
             engine.runAndWait()
+            
         except ImportError:
-            print("pyttsx3 not installed. Install with: pip install pyttsx3")
+            logger.warning("pyttsx3 not installed. Install with: pip install pyttsx3")
+            print("TTS not available. Install edge-tts (recommended) or pyttsx3")
         except Exception as e:
+            logger.error(f"Error with pyttsx3 TTS: {e}")
             print(f"Error with TTS: {e}")
 

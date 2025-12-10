@@ -111,6 +111,14 @@ class GPT4AllClient(AIModule):
         # Build prompt with context
         prompt = self._build_prompt(user_query, context)
         logger.debug(f"Prompt length: {len(prompt)} characters")
+        
+        # Log the full prompt for debugging
+        logger.debug("=" * 80)
+        logger.debug("PROMPT SENT TO GPT4All:")
+        logger.debug("-" * 80)
+        logger.debug(prompt)
+        logger.debug("-" * 80)
+        logger.debug("=" * 80)
 
         try:
             logger.info("Starting GPT4All inference...")
@@ -223,11 +231,18 @@ Parle comme un ingénieur F1 professionnel.""",
         return prompts.get(self.language, prompts["en"])
 
     def _format_context(self, context: Dict[str, Any]) -> str:
-        """Format context dictionary into compact text for faster processing"""
+        """
+        Format context dictionary into compact text for faster processing
+        
+        Data source:
+        - If connected to Assetto Corsa: Real-time telemetry from shared memory
+        - If not connected: Mock/test data (see assetto_corsa_reader._read_mock_data)
+        """
         parts = []
         current = context.get("current", {})
 
         # Compact format: key:value pairs separated by commas
+        # Current telemetry values
         if "speed" in current:
             parts.append(f"S:{current['speed']:.0f}")
         if "rpm" in current:
@@ -243,8 +258,46 @@ Parle comme un ingénieur F1 professionnel.""",
         if "tire_temperatures" in current:
             temps = current["tire_temperatures"]
             parts.append(f"Tires:FL{temps.get('front_left', 0):.0f} FR{temps.get('front_right', 0):.0f} RL{temps.get('rear_left', 0):.0f} RR{temps.get('rear_right', 0):.0f}")
+        
+        # Include deltas if available (rate of change)
+        deltas = context.get("deltas", {})
+        if deltas:
+            delta_parts = []
+            if "speed" in deltas:
+                delta_parts.append(f"ΔS:{deltas['speed']:+.1f}")
+            if "rpm" in deltas:
+                delta_parts.append(f"ΔRPM:{deltas['rpm']:+d}")
+            if "fuel" in deltas:
+                delta_parts.append(f"ΔF:{deltas['fuel']:.3f}L")
+            if delta_parts:
+                parts.append("Deltas:" + " ".join(delta_parts))
+        
+        # Include performance analysis if available
+        analysis = context.get("analysis", {})
+        if analysis:
+            analysis_parts = []
+            if "tire_temp_trend" in analysis:
+                trend = analysis["tire_temp_trend"]
+                analysis_parts.append(f"TireTrend:{trend}")
+            if "fuel_consumption_rate" in analysis:
+                rate = analysis["fuel_consumption_rate"]
+                analysis_parts.append(f"FuelRate:{rate:.3f}L/s")
+            if analysis_parts:
+                parts.append("Analysis:" + " ".join(analysis_parts))
+        
+        # Position information if available
+        if "position" in current:
+            parts.append(f"Pos:P{current['position']}")
 
-        return ", ".join(parts)
+        formatted = ", ".join(parts)
+        
+        # Log data source for debugging
+        if current.get("_is_mock"):
+            logger.debug(f"[MOCK DATA] Telemetry: {formatted}")
+        else:
+            logger.debug(f"[REAL DATA] Telemetry: {formatted}")
+        
+        return formatted
 
     def is_available(self) -> bool:
         """
